@@ -1,205 +1,192 @@
-// wall thickness
-th = 2;
+wallThickness = 2;
+boardDimensionX = 85.5;
+boardDimensionY = 54.2;
+boardGap = 0.4;
+sumThicknessGap = wallThickness + boardGap;
+caseDimensionX = boardDimensionX + (sumThicknessGap * 2);
+caseDimensionY = boardDimensionY + (sumThicknessGap * 2);
+boardClearanceZ = 4 + wallThickness;
 
-// board size
-bx = 85.5;
-by = 54.2;
-
-// gap around board 
-g = 0.4;
-thg = th + g;
-
-// outter dimensions
-ox = bx + (thg * 2);
-oy = by + (thg * 2);
-
-// board z offset
-bzo = 4 + th;
-
-module basicBox()
+module basicBox ()
 {
-    difference()
-    {
-        cube([ox, oy, 17]);
-        translate([th, th, th])
-            cube([bx + g * 2, by + g * 2, 17]);
-    }
+	difference ()
+	{
+		cube ([caseDimensionX, caseDimensionY, 17]);
+
+		translate ([wallThickness, wallThickness, wallThickness])
+		{
+			cube ([boardDimensionX + boardGap * 2, boardDimensionY + boardGap * 2, 17]);
+		}
+	}
 }
 
-module stand( x, y )
+module stand (x, y)
 {
-    translate([x, y, 0])
-    {
-        cylinder( bzo, d = 7, $fn = 30 );
-    }
+	translate ([x, y, 0])
+	{
+		cylinder (boardClearanceZ, d = 7, $fn = 30);
+	}
 }
 
-module BottomScrewHole( x, y )
+module bottomScrewHole (x, y)
 {
-    translate([x, y, -1])
-    {
-        cylinder( bzo + 2, d = 3, $fn = 30 );
-        cylinder( (1 + bzo) - th, d = 6, $fn = 6 );
-    }
+	translate ([x, y, -1])
+	{
+		cylinder (boardClearanceZ + 2, d = 3, $fn = 30);
+		cylinder ((1 + boardClearanceZ) - wallThickness, d = 6, $fn = 6);
+	}
 }
 
-module TopScrewHole( x, y )
+module topScrewHole (x, y)
 {
-    translate([x, y, -1])
-    {
-        cylinder( 9.6 + 2 + th, d = 3, $fn = 30 );
-        cylinder( (9.6 + th + 1) - 1.8, d = 5.4, $fn = 30 );
-    }
+	translate ([x, y, -1])
+	{
+		cylinder (9.6 + 2 + wallThickness, d = 3, $fn = 30);
+		cylinder ((9.6 + wallThickness + 1) - 1.8, d = 5.4, $fn = 30);
+	}
 }
-module TopScrewMount( x, y )
+module topScrewMount (x, y)
 {
-    translate([x, y, 0])
-    {
-        cylinder( th + 9.6, d = 6.4, $fn = 60 );
-    }
+	translate ([x, y, 0])
+	{
+		cylinder (wallThickness + 9.6, d = 6.4, $fn = 60);
+	}
 }
 
 module frontHole(x, z, w, h)
 {
-    translate([x, -10, z + 1.25])
-        cube([w, 13, h + (g * 2)]);
+	translate ([x, -10, z + 1.25])
+	{
+		cube ([w, 13, h + (boardGap * 2)]);
+	}
 }
 
-module bottom() 
+module bottom () 
 {
-    difference()
-    {
-        union()
-        {
-            basicBox();
-            translate([thg, thg, 0])
-            {
-                stand( 4, 18.7 );
-                stand( bx - 4, 18.7 );
-                stand( 4, 50.2 );
-                stand( bx - 4, 50.2 );
-            }
-            // more supports
-            translate([44, th + 5, 0])
-            {
-                cylinder( bzo, d = 5, $fn = 30 );
-            }
-            translate([44, 53.5, 0])
-            {
-                cylinder( bzo, d = 5, $fn = 30 );
-            }
-            
-            translate([6.5 - thg, 7.5 - thg, 0])
-            {
-                cube([6.66 + (2 * thg), 7.25 + (2 * thg), th +1]);
-            }
-        }
-        union()
-        {
-            // SD card
-            frontHole( 2.63, bzo - g, 12.45, 1.75 );
-            
-            // HDMI
-            frontHole( 18.71, bzo - g, 16.45, 7.27 );
-            
-            // otg
-            frontHole( 39.24, (bzo - 0.5) - g, 9.1, 4 );
-            
-            // USB1
-            frontHole( 50.2, bzo - g, 16.7, 8.4 );
-            
-            // USB2
-            frontHole( 70.5, bzo - g, 15.9, 8.4 );
-            
-            // power 
-            translate([71.5, oy - 10, bzo + 1.25])
-                cube([9.8, 20, 7]);
-            
-            // switches
-            translate([6.5 - g, 7.5 - g, -1])
-                cube([6.66 + (2 * g), 7.25 + (2 * g), bzo + 2]);
-            
-            // screw holes with captured nuts
-            translate([thg, thg, 0])
-            {
-                BottomScrewHole( 4, 18.7 );
-                BottomScrewHole( bx - 4, 18.7 );
-                BottomScrewHole( 4, 50.2 );
-                BottomScrewHole( bx - 4, 50.2 );
-            }
-        }
-    }
+	difference ()
+	{
+		union ()
+		{
+			basicBox ();
+
+			translate ([sumThicknessGap, sumThicknessGap, 0])
+			{
+				stand (4, 18.7);
+				stand (boardDimensionX - 4, 18.7);
+				stand (4, 50.2);
+				stand (boardDimensionX - 4, 50.2);
+			}
+
+			// Additional support
+			translate ([44, wallThickness + 5, 0])
+			{
+				cylinder (boardClearanceZ, d = 5, $fn = 30);
+			}
+
+			translate ([44, 53.5, 0])
+			{
+				cylinder (boardClearanceZ, d = 5, $fn = 30);
+			}
+
+			translate ([6.5 - sumThicknessGap, 7.5 - sumThicknessGap, 0])
+			{
+				cube ([6.66 + (2 * sumThicknessGap), 7.25 + (2 * sumThicknessGap), wallThickness +1]);
+			}
+		}
+		union ()
+		{
+			// SD Card Socket
+			frontHole (2.63, boardClearanceZ - boardGap, 12.45, 1.75);
+
+			// HDMI Socket
+			frontHole (18.71, boardClearanceZ - boardGap, 16.45, 7.27);
+
+			// USB-OTG Socket
+			frontHole (39.24, (boardClearanceZ - 0.5) - boardGap, 9.1, 4);
+
+			// USB-Master Socket
+			frontHole (50.2, boardClearanceZ - boardGap, 16.7, 8.4);
+
+			// USB-Master Socket
+			frontHole (70.5, boardClearanceZ - boardGap, 15.9, 8.4);
+
+			// Power Connector
+			translate ([71.5, caseDimensionY - 10, boardClearanceZ + 1.25])
+			{
+				cube ([9.8, 20, 7]);
+			}
+
+			// Switches
+			translate ([6.5 - boardGap, 7.5 - boardGap, -1])
+			{
+				cube ([6.66 + (2 * boardGap), 7.25 + (2 * boardGap), boardClearanceZ + 2]);
+			}
+
+			// Screw Holes
+			translate ([sumThicknessGap, sumThicknessGap, 0])
+			{
+				bottomScrewHole (4, 18.7);
+				bottomScrewHole (boardDimensionX - 4, 18.7);
+				bottomScrewHole (4, 50.2);
+				bottomScrewHole (boardDimensionX - 4, 50.2);
+			}
+		}
+	}
 }
 
-module topSupport(x, y, type)
+module topSupport (x, y, type)
 {
-    translate([x, y, th])
-    {
-        if( type == "a" )
-            cube([th, 6, 5]);
-        if( type == "b" )
-            cube([6, th, 5]);
-    }
+	translate ([x, y, wallThickness])
+	{
+		if (type == "a")
+			cube ([wallThickness, 6, 5]);
+		if (type == "b")
+			cube ([6, wallThickness, 5]);
+	}
 }
 
-androidLogo =
-[[336,45],[[51.75,140.09],[41.48,140.42],[35.4,141.08],[31.92,142.85],[27.9,145.86],[24.16,149.99],[21.74,154.62],[20.51,159.09],[20,163],[20.71,166.94],[22.38,171.5],[24.9,175.82],[27.62,179.2],[30.75,181.56],[34.22,183.45],[38.17,184.54],[42.47,185],[47,185],[47,181],[46.59,177.65],[44.5,177],[42.51,176.97],[41.25,176.89],[39.61,176.25],[36.71,174.85],[33.46,172.54],[30.96,169.71],[29.58,166.41],[29,162.98],[29.54,159.5],[30.83,156.06],[33.12,153.12],[36.06,150.83],[40.55,149.41],[47.73,149],[56,149],[56,167],[56,185],[60.5,185],[65,185],[65,162.5],[65,140],[51.75,140.09]],[[97,140.05],[93.45,140.46],[89.84,141.4],[86.37,143.02],[83.18,145.1],[80.38,147.97],[77.85,151.5],[75.5,155.5],[75.16,170.25],[74.82,185],[78.81,185],[82.8,185],[83.18,172.25],[83.86,161.52],[85.33,156.21],[87.52,153.31],[90.3,150.96],[93.68,149.58],[97.3,149],[100.86,149.46],[104.09,150.55],[106.78,152.58],[109.04,155.3],[110.65,160.29],[111,171.75],[111,185],[115.5,185],[120,185],[119.98,171.25],[119.6,159.39],[118.11,153.44],[115.54,149.49],[111.95,145.69],[107.85,142.79],[104.07,141],[100.52,140.31],[97,140.05]],[[144.25,140.18],[132.52,140.16],[129.43,141.32],[129.12,143.22],[129.18,145.67],[129.5,148.5],[143.74,149],[157.97,149.5],[161.7,153.23],[165.43,156.96],[165.43,162.23],[164.92,167.03],[163.11,170.64],[160.69,173.24],[158.15,175.08],[152.63,176.14],[142.25,176.79],[129,177.2],[129,181.1],[129,185],[143.03,185],[154.78,184.66],[160.78,183.45],[164.24,181.56],[167.34,179.2],[169.95,176.13],[172.22,172.54],[173.75,168.07],[174.25,162.5],[173.75,156.93],[172.22,152.46],[170.1,149.04],[167.85,146.37],[165.16,144.32],[162,142.39],[156.36,140.83],[144.25,140.18]],[[201.78,140.17],[184,139.84],[184,144.42],[184,149],[200.43,149],[216.85,149],[218.81,151.48],[220.18,154.13],[220.09,157.22],[218.95,159.95],[216.96,161.73],[211.3,162.66],[199.25,162.99],[184,163],[184,167],[184,171],[197.53,171],[208.5,171.33],[214.28,172.35],[216.97,173.8],[218.91,175.39],[219.86,177.76],[220.17,181.05],[220.01,185],[224.51,185],[229,185],[228.98,180.25],[228.39,175.69],[226.69,171.5],[224.42,167.5],[226.71,164.11],[228.47,160.33],[228.99,155.61],[228.52,151.15],[227.22,147.82],[225.11,145.25],[222.51,142.82],[219.55,140.5],[201.78,140.17]],[[263.4,140.48],[258.65,140.37],[255.5,140.63],[252.71,141.92],[248.82,144.29],[244.89,147.6],[242.02,151.17],[240.36,155.3],[239.32,159.94],[239.25,164.84],[240.01,169.55],[242.06,174.05],[245.54,178.38],[249.7,181.74],[253.75,183.81],[257.87,184.65],[262.17,185],[266.74,184.33],[271.55,182.52],[276.16,179.41],[280,174.88],[283.5,169.72],[283.46,162.39],[282.92,155.57],[280.43,150.81],[277.13,146.96],[273.38,143.7],[268.92,141.37],[263.4,140.48]],[[298,140],[294,140],[294,162.5],[294,185],[298,185],[302,185],[302,162.5],[302,140],[298,140]],[[326.92,140.16],[312,139.82],[312,144.41],[312,149],[324.75,149],[335.62,149.35],[340.92,150.75],[343.88,153.01],[346.23,156],[347.56,159.68],[347.69,163.74],[346.9,167.46],[345.61,170.47],[343.21,172.87],[339.74,175.14],[336.67,176.62],[335.25,177.15],[331.7,177.04],[323.5,177],[312,177],[312,181],[312,185],[325.8,185],[339.61,185],[344.55,182.52],[349.15,179.41],[352.97,174.93],[356.44,169.81],[356.44,162.64],[355.94,155.93],[353.46,151.02],[350.08,146.99],[346.15,143.54],[341.83,140.5],[326.92,140.16]],[[261,149.01],[257.59,149.58],[254.3,150.96],[251.54,153.3],[249.41,156.17],[248.22,159.55],[247.73,163.12],[248.32,166.6],[249.84,169.77],[252.03,172.32],[254.33,174.3],[257.01,175.52],[260.1,176.28],[263.61,176.08],[267.29,174.81],[270.54,172.53],[273.04,169.71],[274.42,166.41],[274.99,163],[274.48,159.5],[273.25,156],[271,153],[268,150.75],[264.5,149.52],[261,149.01]]];
-
-module top()
+module top ()
 {
-    difference()
-    {
-        union()
-        {
-            cube([ox, oy, th]);
-            topSupport( thg, thg, "a" );
-            topSupport( ox - (thg + th), thg, "a" );
-            topSupport( ox - (thg + th), oy - (thg + 6 + 17), "a" );
-            topSupport( thg, oy - (thg + 6), "a" );
-            
-            topSupport( 55, thg, "b");
-            topSupport( 40, oy - (thg + th), "b");
-            
-            
-            TopScrewMount( thg + 4, oy - (18.7 + thg) );
-            TopScrewMount( thg + (bx - 4), oy - (18.7 + thg) );
-            TopScrewMount( thg + 4, oy - (50.2 + thg) );
-            TopScrewMount( thg + (bx - 4), oy - (50.2 + thg) );
-            
-        }
-        union()
-        {
-            // GPIO access
-            translate([10.5, thg, -1])
-                cube([42, 6.75, th + 2]);
-            
-            
-            TopScrewHole( thg + 4, oy - (18.7 + thg) );
-            TopScrewHole( thg + (bx - 4), oy - (18.7 + thg) );
-            TopScrewHole( thg + 4, oy - (50.2 + thg) );
-            TopScrewHole( thg + (bx - 4), oy - (50.2 + thg) );
-            
-            /*input_width = androidLogo[0][0];
-            input_height= androidLogo[0][1];
-            #translate([0, -140, -1])rotate(180, [0, 1, 0])rotate(180, [1, 0, 0]) 
-            {
-                union() 
-                {
-                    for (i = [1:len(androidLogo) -1] ) 
-                    {
-                            linear_extrude(height=th) {polygon(androidLogo[i]);}
-                    }
-                }
-           
-            }*/
-            
-            
-        }
-    }
+	difference ()
+	{
+		union ()
+		{
+			cube ([caseDimensionX, caseDimensionY, wallThickness]);
+
+			topSupport (sumThicknessGap, sumThicknessGap, "a");
+			topSupport (caseDimensionX - (sumThicknessGap + wallThickness), sumThicknessGap, "a");
+			topSupport (caseDimensionX - (sumThicknessGap + wallThickness), caseDimensionY - (sumThicknessGap + 6 + 17), "a");
+			topSupport (sumThicknessGap, caseDimensionY - (sumThicknessGap + 6), "a");
+			topSupport (55, sumThicknessGap, "b");
+			topSupport (40, caseDimensionY - (sumThicknessGap + wallThickness), "b");
+
+			topScrewMount (sumThicknessGap + 4, caseDimensionY - (18.7 + sumThicknessGap));
+			topScrewMount (sumThicknessGap + (boardDimensionX - 4), caseDimensionY - (18.7 + sumThicknessGap));
+			topScrewMount (sumThicknessGap + 4, caseDimensionY - (50.2 + sumThicknessGap));
+			topScrewMount (sumThicknessGap + (boardDimensionX - 4), caseDimensionY - (50.2 + sumThicknessGap));
+		}
+		union ()
+		{
+			// GPIO
+			translate ([10.5, sumThicknessGap, -1])
+			{
+				cube ([42, 6.75, wallThickness + 2]);
+			}
+
+			topScrewHole (sumThicknessGap + 4, caseDimensionY - (18.7 + sumThicknessGap));
+			topScrewHole (sumThicknessGap + (boardDimensionX - 4), caseDimensionY - (18.7 + sumThicknessGap));
+			topScrewHole (sumThicknessGap + 4, caseDimensionY - (50.2 + sumThicknessGap));
+			topScrewHole (sumThicknessGap + (boardDimensionX - 4), caseDimensionY - (50.2 + sumThicknessGap));
+		}
+	}
 }
 
-union()
+union ()
 {
-    bottom();
-    translate([0, oy + 5, 0])top();
+	bottom ();
+
+	translate ([0, caseDimensionY + 5, 0])
+	{
+		top ();
+	}
 }
