@@ -30,7 +30,7 @@ module stand( x, y )
 {
     translate([x, y, 0])
     {
-        cylinder( bzo, d = 7, $fn = 30 );
+        cylinder( bzo, d = 8.5, $fn = 30 );
     }
 }
 
@@ -38,8 +38,8 @@ module BottomScrewHole( x, y )
 {
     translate([x, y, -1])
     {
-        cylinder( bzo + 2, d = 3, $fn = 30 );
-        cylinder( (1 + bzo) - th, d = 6, $fn = 6 );
+        cylinder( bzo + 2, d = 3.3, $fn = 30 );
+        cylinder( (1 + bzo) - th, d = 7.5, $fn = 6 );
     }
 }
 
@@ -47,15 +47,15 @@ module TopScrewHole( x, y )
 {
     translate([x, y, -1])
     {
-        cylinder( 9.6 + 2 + th, d = 3, $fn = 30 );
-        cylinder( (9.6 + th + 1) - 1.8, d = 5.4, $fn = 30 );
+        cylinder( 9.6 + 2 + th, d = 3.3, $fn = 30 );
+        cylinder( (9.6 + th + 1) - 1.8, d = 5.8, $fn = 30 );
     }
 }
 module TopScrewMount( x, y )
 {
     translate([x, y, 0])
     {
-        cylinder( th + 9.6, d = 6.4, $fn = 60 );
+        cylinder( th + 9.6, d = 8, $fn = 60 );
     }
 }
 
@@ -88,10 +88,10 @@ module bottom()
             {
                 cylinder( bzo, d = 5, $fn = 30 );
             }
-            
-            translate([6.5 - thg, 7.5 - thg, 0])
+
+            translate([6.5 - thg + 0.5, 7.5 - thg + 0.5, 0])
             {
-                cube([6.66 + (2 * thg), 7.25 + (2 * thg), th +1]);
+                cube([6.66 + (2 * thg) - 1.0, 7.25 + (2 * thg) - 1.0, th +1]);
             }
         }
         union()
@@ -106,12 +106,12 @@ module bottom()
             frontHole( 39.24, (bzo - 0.5) - g, 9.1, 4 );
             
             // USB1
-            frontHole( 50.2, bzo - g, 16.7, 8.4 );
-            
+            frontHole( 51.0, bzo - g, 15.9, 7.9 );
+
             // USB2
-            frontHole( 70.5, bzo - g, 15.9, 8.4 );
-            
-            // power 
+            frontHole( 70.5, bzo - g, 15.9, 7.9 );
+
+            // power
             translate([71.5, oy - 10, bzo + 1.25])
                 cube([9.8, 20, 7]);
             
@@ -159,9 +159,15 @@ module top()
             
             topSupport( 55, thg, "b");
             topSupport( 40, oy - (thg + th), "b");
-            
-            
-            TopScrewMount( thg + 4, oy - (18.7 + thg) );
+
+
+            difference()
+            {
+                TopScrewMount( thg + 4, oy - (18.7 + thg) );
+                // SD card notch
+                translate([thg, oy - (18.7 + thg) + 2.5, th + 8.1])
+                    cube([8, 1.6, 1.6]);
+            }
             TopScrewMount( thg + (bx - 4), oy - (18.7 + thg) );
             TopScrewMount( thg + 4, oy - (50.2 + thg) );
             TopScrewMount( thg + (bx - 4), oy - (50.2 + thg) );
